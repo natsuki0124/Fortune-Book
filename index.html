@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>命運之書 Book of Answers</title>
+    <style>
+        :root {
+            --book-size: 500px; 
+        }
+
+        /* 針對 iPhone 等手機螢幕的適配 */
+        @media screen and (max-width: 480px) {
+            :root {
+                --book-size: 85vw; 
+            }
+            #text-content {
+                font-size: 1.5rem !important;
+                padding: 0 20px;
+            }
+        }
+
+        body {
+            background: #0f0f1a;
+            color: white;
+            font-family: 'Microsoft JhengHei', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        /* --- 占卜結果容器 --- */
+        #result-display {
+            display: none; 
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            flex-direction: column;
+            justify-content: space-between; /* 將內容推向頂端與底端 */
+            align-items: center;
+            padding: 10% 0 10% 0; 
+            box-sizing: border-box;
+            pointer-events: none; /* 確保不影響書本點擊 */
+        }
+
+        /* 文字浮現動畫：由下往上並淡入 */
+        @keyframes fadeInUpText {
+            from { 
+                opacity: 0; 
+                transform: translateY(50px); /* 從較低處浮起 */
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0);
+            }
+        }
+
+        #text-content {
+            color: #ffffff; 
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.7), 2px 2px 4px rgba(0, 0, 0, 0.9);
+            text-align: center;
+            animation: fadeInUpText 1.5s ease-out forwards;
+            pointer-events: auto;
+        }
+
+        /* --- 書本容器 --- */
+        .book-container {
+            position: relative;
+            width: var(--book-size);
+            height: var(--book-size);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+
+        #book-image {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: contain; 
+        }
+
+        /* --- 輸入介面 --- */
+        .content-layer {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            width: 80%; 
+        }
+
+        h1 { font-size: 1.6rem; margin-bottom: 15px; text-shadow: 2px 2px 5px rgba(0,0,0,0.7); }
+        
+        input {
+            width: 100px;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 16px; /* 避免 iPhone 輸入時畫面縮放 */
+        }
+
+        .btn-group { margin-top: 20px; }
+
+        button {
+            background-color: #e94560;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
+            pointer-events: auto;
+        }
+
+        /* --- 重新翻頁按鈕：靜態不浮動 --- */
+        .reset-btn { 
+            background-color: #4e4e6a; 
+            opacity: 1; /* 保持不透明 */
+            margin-top: auto; /* 確保靠底 */
+            transition: transform 0.2s;
+        }
+        
+        .reset-btn:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+
+<div id="result-display">
+    <div id="text-content"></div>
+    
+    <button class="reset-btn" onclick="resetBook()">重新翻頁</button>
+</div>
+
+<div class="book-container">
+    <img src="cover.png" id="book-image" alt="Book">
+    <div class="content-layer" id="input-layer">
+        <div id="input-area">
+            <h1>📖 命運之書</h1>
+            <p>默想問題後，輸入頁碼</p>
+            <input type="number" id="pageNumber" min="1" max="100" placeholder="1-100">
+            <div class="btn-group">
+                <button onclick="revealDestiny()">翻開此頁</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const answers = [
+        "現在放手，正是時候。",
+        "答案就在你最意想不到的地方。",
+        "你需要更多的耐心與等待。",
+        "是的，這是一個明智的決定。",
+        "行動勝過思考，現在就去做吧。",
+        "這件事會帶來超乎預期的好結果。",
+        "換個方向走，路會更寬廣。",
+        "相信你的直覺，它是正確的。",
+        "保持誠實，這是唯一的解法。",
+        "這是一個肯定的信號。"
+    ];
+
+    function revealDestiny() {
+        const pageInput = document.getElementById('pageNumber');
+        const page = pageInput.value;
+        const bookImg = document.getElementById('book-image');
+        const inputLayer = document.getElementById('input-layer');
+        const resultDisplay = document.getElementById('result-display');
+        const textContent = document.getElementById('text-content');
+
+        if (!page || page < 1 || page > 100) {
+            alert("請輸入 1 到 100 的頁碼。");
+            return;
+        }
+
+        // 收起手機鍵盤並切換圖片
+        pageInput.blur();
+        bookImg.src = "open.png";
+        
+        inputLayer.style.display = "none";
+        resultDisplay.style.display = "flex"; 
+        
+        textContent.innerText = "正在讀取星象...";
+
+        setTimeout(() => {
+            const index = (parseInt(page) * 11) % answers.length;
+            textContent.innerText = `「 ${answers[index]} 」`;
+        }, 1200);
+    }
+
+    function resetBook() {
+        document.getElementById('book-image').src = "cover.png";
+        document.getElementById('input-layer').style.display = "block";
+        document.getElementById('result-display').style.display = "none";
+        document.getElementById('pageNumber').value = "";
+    }
+</script>
+
+</body>
+</html>
