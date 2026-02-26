@@ -179,7 +179,7 @@ const answers = [
     "行動勝過思考，現在就去做吧。", "這件事會帶來超乎預期的好結果。", "換個方向走，路會更寬廣。", "相信你的直覺，它是正確的。",
     "保持誠實，這是唯一的解法。", "這是一個肯定的信號。", "不要急，讓子彈飛一會兒。", "最簡單的答案通常就是正確的。",
     "這可能不是你想要的，但卻是你需要的。", "多聽聽他人的意見，但最後由你決定。", "現在不是糾結細節的時候。", "放輕鬆，沒你想得那麼嚴重。",
-    "再給自己一次機會。", "答案隱藏在你的回憶裡。", "這條路雖然辛苦，但值得走下去。", "換位思考，你會看到全新的風景。",
+    "再給自己一次機會。", "答案隱藏在你的回憶裡。", "這條路雖然辛苦，但值得走下去。", "換個風景，心境也會跟著轉變。",
     "不要被情緒左右了你的判斷。", "此刻的沉默比言語更有力量。", "你需要先學會愛自己。", "這是一個轉彎的契機，不是終點。",
     "先睡一覺，明天起床就有答案了。", "你的善良會為你帶來好運。", "專注於你能控制的事物。", "接受不完美，也是一種圓滿。",
     "答案就在你身邊的人身上。", "不要害怕拒絕，那是你的權利。", "冒一點險，世界會變得很不一樣。", "你需要徹底的斷捨離。",
@@ -201,40 +201,40 @@ const answers = [
     "別忘了對自己溫柔一點。", "這是命運給你的小小考驗。", "答案就在你的笑容裡。", "順其自然，不要強求。",
     "大膽地展現你的獨特性。", "你的心會帶領你去正確的地方。", "這件事值得你付出真心。", "一切都是最好的安排。"
 ];
-    function revealDestiny() {
-        const pageInput = document.getElementById('pageNumber');
-        const page = pageInput.value;
-        const bookImg = document.getElementById('book-image');
-        const inputLayer = document.getElementById('input-layer');
-        const resultDisplay = document.getElementById('result-display');
-        const textContent = document.getElementById('text-content');
 
-        if (!page || page < 1 || page > 100) {
-            alert("請輸入 1 到 100 的頁碼。");
-            return;
-        }
+function revealDestiny() {
+    const pageInput = document.getElementById('pageNumber');
+    const page = parseInt(pageInput.value);
+    const bookImg = document.getElementById('book-image');
+    const inputLayer = document.getElementById('input-layer');
+    const resultDisplay = document.getElementById('result-display');
+    const textContent = document.getElementById('text-content');
 
-        // 收起手機鍵盤並切換圖片
-        pageInput.blur();
-        bookImg.src = "open.png";
-        
-        inputLayer.style.display = "none";
-        resultDisplay.style.display = "flex"; 
-        
-        textContent.innerText = "正在翻閱命運的扉頁...";
-
-        setTimeout(() => {
-            const index = (parseInt(page) * 11) % answers.length;
-            textContent.innerText = `「 ${answers[index]} 」`;
-        }, 1200);
+    if (!page || page < 1 || page > 100) {
+        alert("請輸入 1 到 100 的頁碼。");
+        return;
     }
 
-    function resetBook() {
-        document.getElementById('book-image').src = "cover.png";
-        document.getElementById('input-layer').style.display = "block";
-        document.getElementById('result-display').style.display = "none";
-        document.getElementById('pageNumber').value = "";
-    }
+    pageInput.blur();
+    bookImg.src = "open.png";
+    inputLayer.style.display = "none";
+    resultDisplay.style.display = "flex"; 
+    
+    textContent.innerText = "正在翻閱命運之書...";
+
+    setTimeout(() => {
+        // 使用 (page - 1) 確保輸入 1 得到陣列第一個 [0]，輸入 100 得到最後一個 [99]
+        const index = page - 1; 
+        textContent.innerText = `「 ${answers[index]} 」`;
+    }, 1200);
+}
+
+function resetBook() {
+    document.getElementById('book-image').src = "cover.png";
+    document.getElementById('input-layer').style.display = "block";
+    document.getElementById('result-display').style.display = "none";
+    document.getElementById('pageNumber').value = "";
+}
 </script>
 
 </body>
